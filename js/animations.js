@@ -1,5 +1,7 @@
 $(document).ready(function(){
 
+  jQuery("time.timeago").timeago();
+
   var charCountColor = $('#char-count').css('color');
   $('.tweet-compose').focus(function() {
     var height = 40;
@@ -12,12 +14,14 @@ $(document).ready(function(){
   $('.reply').css('display', 'none');
   $('.tweet-actions').css('display', 'none');
 
-  $(document).hover(function() {
-    $(this).find('.tweet').hover(function() {
-      $(this).find('.tweet-actions').removeClass('active');
-      $('.tweet-actions.active').fadeOut(0);
+  $(document).mouseover(function() {
+    $(this).find('.tweet').mouseenter(function() {
       $(this).find('.tweet-actions').fadeIn(500);
       $(this).find('.tweet-actions').addClass('active');
+    });
+
+    $(this).find('.tweet').mouseleave(function() {
+      $('.tweet-actions.active').fadeOut(0);
     });
   });
 
@@ -63,6 +67,7 @@ $(document).ready(function(){
       tweetClone.find('.tweet-compose').prop('placeholder', 'Reply to @elderlowell');
       tweetClone.find('.num-retweets').html(0);
       tweetClone.find('.num-favorites').html(0);
+      tweetClone.find('.time').html(jQuery.timeago(new Date()));
       $('.tweet-compose').val('');
       $('.tweet-compose').css('height', 33);
       $('#tweet-controls').css('display', 'none');
@@ -70,7 +75,5 @@ $(document).ready(function(){
       return tweetClone;
     });
   });
-
-
 
 });
