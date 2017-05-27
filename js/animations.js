@@ -1,52 +1,72 @@
 $(document).ready(function(){
-  var maxCount = 140;
 
-  $('#char-count').hide();
-  $('#tweet-submit').hide();
-
+  var charCountColor = $('#char-count').css('color');
   $('.tweet-compose').focus(function() {
-    var height = 25;
+    var height = 40;
     $(this).css('height', height*2);
-    $('#char-count').show();
-    $('#tweet-submit').show();
+    $('#tweet-controls').css('display', 'block');
   });
 
-  // $('.tweet-compose').blur(function() {
-  //   $(this).css('height', 25);
-  //   var currentCount = $(this).val().length;
-  //   if (currentCount === 0) {
-  //     $('#char-count').hide();
-  //     $('#tweet-submit').hide();
-  //   }
-  // });
+  $('#tweet-submit').prop('disabled', true);
+  $('.stats').css('display', 'none');
+  $('.reply').css('display', 'none');
+  $('.tweet-actions').css('display', 'none');
 
-  $('.tweet-compose').keyup(function() {
+  $(document).hover(function() {
+    $(this).find('.tweet').hover(function() {
+      $(this).find('.tweet-actions').removeClass('active');
+      $('.tweet-actions.active').fadeOut(0);
+      $(this).find('.tweet-actions').fadeIn(500);
+      $(this).find('.tweet-actions').addClass('active');
+    });
+  });
+
+  $(document).on('click', function() {
+    $(this).find('.tweet').on('click', function() {
+      $(this).find('.stats').removeClass('active');
+      $(this).find('.reply').removeClass('active');
+      $('.stats.active').slideUp(500);
+      $('.reply.active').find('.tweet-compose').css('height', 33);
+      $(this).find('.stats').slideDown(500);
+      $(this).find('.reply').slideDown(500);
+      $(this).find('.stats').addClass('active');
+      $(this).find('.reply').addClass('active');
+    });
+  });
+
+  $('#tweet-content').find('.tweet-compose').keyup(function() {
+    var maxCount = 140;
     var currentCount = $(this).val().length;
     currentCount = maxCount - currentCount;
     $('#char-count').text(currentCount);
     if (currentCount <= 10) {
       $('#char-count').css('color', 'red');
     }
-    if (currentCount > 10) {
-      $('#char-count').css('color', 'inherit');
+    else {
+      $('#char-count').css('color', charCountColor);
     }
-    if (currentCount < 0) {
+    if (currentCount < 0 || currentCount === 140) {
       $('#tweet-submit').prop('disabled', true);
     }
-    if (currentCount >= 0) {
+    else {
       $('#tweet-submit').prop('disabled', false);
     }
   });
 
-  $('#tweet-submit').on('click', function insertTweet() {
+  $('#tweet-submit').on('click', function() {
     $('#stream').prepend(function() {
       var tweetClone = $('.tweet').first().clone();
       tweetClone.find('.avatar').attr('src', 'img/alagoon.jpg');
       tweetClone.find('.fullname').html('Jonathan Lowell');
       tweetClone.find('.username').html('@elderlowell');
-      tweetClone.find('.tweet-text').html($('.tweet-compose').val());
+      tweetClone.find('.tweet-text').html($('#tweet-content').find('.tweet-compose').val());
+      tweetClone.find('.tweet-compose').prop('placeholder', 'Reply to @elderlowell');
+      tweetClone.find('.num-retweets').html(0);
+      tweetClone.find('.num-favorites').html(0);
       $('.tweet-compose').val('');
-      $('.tweet-compose').css('height', 25);
+      $('.tweet-compose').css('height', 33);
+      $('#tweet-controls').css('display', 'none');
+      $('#char-count').text(140);
       return tweetClone;
     });
   });
